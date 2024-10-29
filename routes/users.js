@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user'); // Ensure this path is correct
+const User = require('../models/user');
 const bcrypt = require('bcrypt');
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      accessLevel: 'user' // Default access level for new users
+      accessLevel: 'user' // Default access
     });
 
     // Create JWT Token
