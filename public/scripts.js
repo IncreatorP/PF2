@@ -22,10 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('registerTab').classList.add('active');
     }
   }
-  
   async function handleLogin() {
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
+  
     try {
       const response = await fetch('/api/login', {
         method: 'POST',
@@ -34,19 +34,25 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         body: JSON.stringify({ email, password })
       });
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem('userToken', data.token);
-        localStorage.setItem('userData', JSON.stringify({ name: data.name, accessLevel: data.accessLevel }));
-        showDashboard(data);
-      } else {
-        document.getElementById('loginStatus').innerText = `Login failed: ${data.error}`;
+  
+      if (!response.ok) {
+        // Handle non-2xx responses gracefully
+        const errorText = await response.text();
+        document.getElementById('loginStatus').innerText = `Login failed: ${errorText || 'Unknown error'}`;
+        return;
       }
+  
+      const data = await response.json();
+      localStorage.setItem('userToken', data.token);
+      localStorage.setItem('userData', JSON.stringify({ name: data.name, accessLevel: data.accessLevel }));
+      showDashboard(data);
+  
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Error during login:', error.message || error);
       document.getElementById('loginStatus').innerText = 'Login failed: Network error';
     }
   }
+  
   
   async function handleRegister() {
     const name = document.getElementById('registerName').value;
